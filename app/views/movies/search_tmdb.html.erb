@@ -3,26 +3,60 @@
 
 
 <h2>Search in TMDb</h2>
-<%# Part 5 here %>
+
 
 <div class="search-container">
-<%# Part 1 here %>
-<%= form_tag <%# fill in here #%> do %>
+  <%= form_tag search_tmdb_path, method: :get, id: 'tmdb_form' do %>
     <label for="searchMovieName">Movie Name</label>
-    <%= text_field_tag 'title', nil, class: "form-control", id: "movie_title_field", placeholder: "Manhunter", id: "movie_title_field"%> 
-    <label for="searchReleaseDateField">Release Year</label>
-    <%= text_field_tag 'release_year', nil, class: "form-control", id: "movie_year_field", placeholder: "1986", id: "movie_year_field"%>
-  
-  <div class="form-check">
-    <%= radio_button_tag 'language', 'en', false, class: "form-check-input" %>
-    <label class="form-check-label" for="language_en">English Only</label>
-  </div>
+    <%= text_field_tag 'title', nil, class: "form-control", id: "movie_title_field", placeholder: "Manhunter" %>
 
-  <div class="form-check">
-    <%= radio_button_tag 'language', 'all', true, class: "form-check-input" %>
-    <label class="form-check-label" for="language_all">All Languages</label>
-  </div>
-  <%= submit_tag 'Search', id: 'tmdb_submit', class: 'btn btn-warning col-2' %>
-  
-<% end %>
+    <label for="searchReleaseDateField">Release Year</label>
+    <%= text_field_tag 'release_year', nil, class: "form-control", id: "movie_year_field", placeholder: "1986" %>
+
+    <div class="form-check">
+      <%= radio_button_tag 'language', 'en', false, class: "form-check-input" %>
+      <label class="form-check-label" for="language_en">English Only</label>
+    </div>
+
+    <div class="form-check">
+      <%= radio_button_tag 'language', 'all', true, class: "form-check-input" %>
+      <label class="form-check-label" for="language_all">All Languages</label>
+    </div>
+    <%= submit_tag 'Search', id: 'tmdb_submit', class: 'btn btn-warning col-2' %>
+  <% end %>
+
+  <% if @movies.present? %>
+    <table class="table table-striped" id="search_movies">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Rating</th>
+          <th>Release Date</th>
+          <th>Description</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @movies.each do |movie| %>
+          <tr>
+            <td><%= movie.title %></td>
+            <td><%= movie.rating %></td>
+            <td><%= movie.release_date %></td>
+            <td><%= movie.description %></td>
+            <td>
+              <%= form_tag add_movie_path, method: :post do %>
+                <%= hidden_field_tag 'movie[title]', movie.title %>
+                <%= hidden_field_tag 'movie[rating]', movie.rating %>
+                <%= hidden_field_tag 'movie[description]', movie.description %>
+                <%= hidden_field_tag 'movie[release_date]', movie.release_date %>
+                <%= submit_tag 'Add movie', class: 'btn btn-primary' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <%= link_to 'Back to movie list', movies_path, class: 'btn btn-secondary mt-3' %>
 </div>
