@@ -32,7 +32,9 @@ class Movie < ApplicationRecord
     response = Faraday.get(full_url)
     parsed_response = JSON.parse(response.body)
 
-    parsed_response['results'].map do |movie|
+    parsed_response['results']
+      .reject { |movie| Movie.exists?(title: movie['title']) }
+      .map do |movie|
       Movie.new(title: movie['title'], rating: 'R', description: movie['overview'], release_date: movie['release_date'])
     end
   end
